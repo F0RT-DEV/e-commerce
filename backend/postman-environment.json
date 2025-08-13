@@ -1,0 +1,97 @@
+{
+  "id": "e-commerce-development-env",
+  "name": "E-commerce Development",
+  "values": [
+    {
+      "key": "protocol",
+      "value": "http",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "host",
+      "value": "localhost",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "port",
+      "value": "3334",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "baseURL",
+      "value": "{{protocol}}://{{host}}:{{port}}",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "apiPrefix",
+      "value": "/api",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "authBase",
+      "value": "/auth",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "adminBase",
+      "value": "/admin",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientBase",
+      "value": "/client",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "publicBase",
+      "value": "/public",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "rota",
+      "value": "{{baseURL}}{{apiPrefix}}{{authBase}}",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "adminURL",
+      "value": "{{baseURL}}{{apiPrefix}}{{adminBase}}",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientURL",
+      "value": "{{baseURL}}{{apiPrefix}}{{clientBase}}",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "publicURL",
+      "value": "{{baseURL}}{{apiPrefix}}{{publicBase}}",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "statusURL",
+      "value": "{{baseURL}}{{apiPrefix}}/status",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

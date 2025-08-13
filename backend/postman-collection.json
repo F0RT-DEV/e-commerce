@@ -1,0 +1,172 @@
+{
+  "info": {
+    "name": "E-commerce API",
+    "description": "API do sistema de e-commerce com rotas de autenticação, admin e cliente",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": "http://localhost:3333"
+    },
+    {
+      "key": "rota",
+      "value": "{{baseURL}}/api/auth"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Status da API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/status",
+              "host": ["{{baseURL}}"],
+              "path": ["api", "status"]
+            }
+          }
+        },
+        {
+          "name": "Registrar Usuário",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"senha\": \"123456\",\n  \"telefone\": \"11999999999\",\n  \"endereco\": \"Rua das Flores, 123\",\n  \"tipo\": \"cliente\"\n}"
+            },
+            "url": {
+              "raw": "{{rota}}/register",
+              "host": ["{{rota}}"],
+              "path": ["register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('authToken', response.token);",
+                  "    console.log('Token salvo:', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@email.com\",\n  \"senha\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{rota}}/login",
+              "host": ["{{rota}}"],
+              "path": ["login"]
+            }
+          }
+        },
+        {
+          "name": "Obter Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rota}}/me",
+              "host": ["{{rota}}"],
+              "path": ["me"]
+            }
+          }
+        },
+        {
+          "name": "Esqueci Minha Senha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@email.com\"\n}"
+            },
+            "url": {
+              "raw": "{{rota}}/forgot-password",
+              "host": ["{{rota}}"],
+              "path": ["forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Redefinir Senha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"SEU_TOKEN_DE_RESET_AQUI\",\n  \"novaSenha\": \"novaSenha123\"\n}"
+            },
+            "url": {
+              "raw": "{{rota}}/reset-password",
+              "host": ["{{rota}}"],
+              "path": ["reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Teste de Rota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teste\": \"dados de teste\"\n}"
+            },
+            "url": {
+              "raw": "{{rota}}/test",
+              "host": ["{{rota}}"],
+              "path": ["test"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
