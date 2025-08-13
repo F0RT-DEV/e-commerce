@@ -21,6 +21,8 @@
 - `{{adminURL}}` = `http://localhost:3333/api/admin`
 - `{{clientURL}}` = `http://localhost:3333/api/client`
 - `{{statusURL}}` = `http://localhost:3333/api/status`
+- `{{productsURL}}` = `http://localhost:3333/api/public/products`
+- `{{categoriesURL}}` = `http://localhost:3333/api/public/categories`
 
 ### **Uso nas Requisições:**
 ```
@@ -102,12 +104,32 @@ POST {{rota}}/reset-password   # Redefinir senha
 POST {{rota}}/test             # Teste de rota
 ```
 
-### **Administração (futuras):**
+### **Administração:**
 ```
-GET    {{adminURL}}/products     # Listar produtos
-POST   {{adminURL}}/products     # Criar produto
-PUT    {{adminURL}}/products/:id # Atualizar produto
-DELETE {{adminURL}}/products/:id # Deletar produto
+GET    {{adminURL}}/products         # Listar produtos (admin)
+POST   {{adminURL}}/products         # Criar produto (admin)
+PUT    {{adminURL}}/products/:id     # Atualizar produto (admin)
+DELETE {{adminURL}}/products/:id     # Deletar produto (admin)
+GET    {{adminURL}}/products/stats   # Estatísticas produtos (admin)
+
+GET    {{adminURL}}/categories       # Listar categorias (admin)
+POST   {{adminURL}}/categories       # Criar categoria (admin)
+PATCH  {{adminURL}}/categories/:id   # Atualizar categoria (admin)
+DELETE {{adminURL}}/categories/:id   # Deletar categoria (admin)
+GET    {{adminURL}}/categories/stats # Estatísticas categorias (admin)
+```
+
+### **Produtos Públicos:**
+```
+GET    {{productsURL}}               # Listar produtos públicos
+GET    {{productsURL}}/search        # Buscar produtos
+GET    {{productsURL}}/:id           # Detalhes do produto
+```
+
+### **Categorias Públicas:**
+```
+GET    {{categoriesURL}}             # Listar categorias públicas
+GET    {{categoriesURL}}/:id         # Detalhes da categoria
 ```
 
 ### **Cliente (futuras):**

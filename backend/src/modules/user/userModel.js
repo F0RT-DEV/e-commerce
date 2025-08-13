@@ -20,8 +20,7 @@ export const updateUserProfile = async (id, userData) => {
   return await db("usuarios")
     .where({ id })
     .update({
-      ...userData,
-      atualizado_em: new Date()
+      ...userData
     });
 };
 
@@ -30,8 +29,7 @@ export const updateUserPassword = async (id, newPasswordHash) => {
   return await db("usuarios")
     .where({ id })
     .update({
-      senha: newPasswordHash,
-      atualizado_em: new Date()
+      senha: newPasswordHash
     });
 };
 
@@ -40,8 +38,7 @@ export const updateUserEmail = async (id, newEmail) => {
   return await db("usuarios")
     .where({ id })
     .update({
-      email: newEmail,
-      atualizado_em: new Date()
+      email: newEmail
     });
 };
 

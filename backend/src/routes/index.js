@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { API_CONFIG } from "./config.js";
 import authRoutes from "./auth.routes.js";
+import productRoutes from "./products.routes.js";
+import categoryRoutes from "./categories.routes.js";
+import adminProductRoutes from "./admin/products.routes.js";
+import adminCategoryRoutes from "./admin/categories.routes.js";
 // Importar outras rotas conforme necessário
-// import adminProductRoutes from "./admin/products.routes.js";
-// import adminCategoryRoutes from "./admin/categories.routes.js";
 // import clientOrderRoutes from "./client/orders.routes.js";
 
 const router = Router();
@@ -19,6 +21,8 @@ router.get('/api/status', (req, res) => {
     version: API_CONFIG.version,
     routes: {
       auth: `${API_CONFIG.prefix}${API_CONFIG.auth.base}`,
+      products: `${API_CONFIG.prefix}${API_CONFIG.public.base}/products`,
+      categories: `${API_CONFIG.prefix}${API_CONFIG.public.base}/categories`,
       admin: `${API_CONFIG.prefix}${API_CONFIG.admin.base}`,
       client: `${API_CONFIG.prefix}${API_CONFIG.client.base}`,
       public: `${API_CONFIG.prefix}${API_CONFIG.public.base}`
@@ -30,9 +34,22 @@ router.get('/api/status', (req, res) => {
 router.use(`${API_CONFIG.prefix}${API_CONFIG.auth.base}`, authRoutes);
 console.log(`✅ Rotas de autenticação: ${API_CONFIG.prefix}${API_CONFIG.auth.base}`);
 
-// Rotas de administração (quando implementadas)
-// router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`, adminProductRoutes);
-// router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`, adminCategoryRoutes);
+// Rotas públicas de produtos
+router.use(`${API_CONFIG.prefix}${API_CONFIG.public.base}/products`, productRoutes);
+console.log(`✅ Rotas de produtos: ${API_CONFIG.prefix}${API_CONFIG.public.base}/products`);
+
+// Rotas públicas de categorias
+router.use(`${API_CONFIG.prefix}${API_CONFIG.public.base}/categories`, categoryRoutes);
+console.log(`✅ Rotas de categorias: ${API_CONFIG.prefix}${API_CONFIG.public.base}/categories`);
+
+// Rotas de administração - produtos
+router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`, adminProductRoutes);
+console.log(`✅ Rotas admin de produtos: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`);
+
+// Rotas de administração - categorias
+router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`, adminCategoryRoutes);
+console.log(`✅ Rotas admin de categorias: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`);
+console.log(`✅ Rotas admin de produtos: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`);
 
 // Rotas do cliente (quando implementadas)
 // router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/orders`, clientOrderRoutes);
@@ -46,6 +63,8 @@ router.use('*', (req, res) => {
     path: req.originalUrl,
     availableRoutes: {
       auth: `${API_CONFIG.prefix}${API_CONFIG.auth.base}`,
+      products: `${API_CONFIG.prefix}${API_CONFIG.public.base}/products`,
+      admin: `${API_CONFIG.prefix}${API_CONFIG.admin.base}`,
       status: `${API_CONFIG.prefix}/status`
     }
   });
