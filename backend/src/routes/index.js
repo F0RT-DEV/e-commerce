@@ -5,8 +5,9 @@ import productRoutes from "./products.routes.js";
 import categoryRoutes from "./categories.routes.js";
 import adminProductRoutes from "./admin/products.routes.js";
 import adminCategoryRoutes from "./admin/categories.routes.js";
-// Importar outras rotas conforme necessário
-// import clientOrderRoutes from "./client/orders.routes.js";
+import adminOrderRoutes from "./admin/orders.routes.js";
+import cartRoutes from "./client/cart.routes.js";
+import clientOrderRoutes from "./client/orders.routes.js";
 
 const router = Router();
 
@@ -49,10 +50,18 @@ console.log(`✅ Rotas admin de produtos: ${API_CONFIG.prefix}${API_CONFIG.admin
 // Rotas de administração - categorias
 router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`, adminCategoryRoutes);
 console.log(`✅ Rotas admin de categorias: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`);
-console.log(`✅ Rotas admin de produtos: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`);
 
-// Rotas do cliente (quando implementadas)
-// router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/orders`, clientOrderRoutes);
+// Rotas de administração - pedidos
+router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/orders`, adminOrderRoutes);
+console.log(`✅ Rotas admin de pedidos: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/orders`);
+
+// Rotas do cliente - carrinho
+router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/cart`, cartRoutes);
+console.log(`✅ Rotas do carrinho: ${API_CONFIG.prefix}${API_CONFIG.client.base}/cart`);
+
+// Rotas do cliente - pedidos
+router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/orders`, clientOrderRoutes);
+console.log(`✅ Rotas de pedidos do cliente: ${API_CONFIG.prefix}${API_CONFIG.client.base}/orders`);
 
 // Middleware para rotas não encontradas
 router.use('*', (req, res) => {

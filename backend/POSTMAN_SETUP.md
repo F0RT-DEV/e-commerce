@@ -132,10 +132,18 @@ GET    {{categoriesURL}}             # Listar categorias públicas
 GET    {{categoriesURL}}/:id         # Detalhes da categoria
 ```
 
+### **Cliente - Carrinho:**
+```
+GET  {{clientURL}}/cart              # Visualizar carrinho
+POST {{clientURL}}/cart              # Adicionar produto ao carrinho
+PATCH {{clientURL}}/cart/:produto_id # Atualizar quantidade
+DELETE {{clientURL}}/cart/:produto_id # Remover item do carrinho
+DELETE {{clientURL}}/cart            # Limpar carrinho
+POST {{clientURL}}/cart/checkout     # Finalizar compra
+```
+
 ### **Cliente (futuras):**
 ```
-GET  {{clientURL}}/cart          # Carrinho
-POST {{clientURL}}/cart          # Adicionar ao carrinho
 GET  {{clientURL}}/orders        # Pedidos
 POST {{clientURL}}/orders        # Criar pedido
 ```

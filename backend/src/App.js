@@ -2,6 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import session from "express-session";
 import routes from "./routes/index.js"; // Um index.js que importa as rotas
 import { setupDatabaseManual } from "./config/manualDatabase.js"; // ✅ Configuração manual
 
@@ -25,6 +26,19 @@ app.use(cors({
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// 🛒 Configuração de sessão para carrinho
+app.use(session({
+	secret: process.env.SESSION_SECRET || 'ecommerce-cart-secret-key',
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		secure: process.env.NODE_ENV === 'production',
+		httpOnly: true,
+		maxAge: 24 * 60 * 60 * 1000 // 24 horas
+	}
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
