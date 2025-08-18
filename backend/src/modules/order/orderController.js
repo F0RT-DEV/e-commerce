@@ -11,6 +11,7 @@ import {
   getAllOrders,
   getOrderStats 
 } from './orderModel.js';
+import { NotificationModel } from '../notification/notificationModel.js';
 import db from '../../db.js';
 
 // 📋 Listar pedidos do cliente
@@ -99,7 +100,29 @@ export const updateOrderStatusAdmin = async (req, res) => {
     }
 
     const { status, observacoes_admin } = value;
+    
+    // Buscar pedido atual para obter o status anterior e usuario_id
+    const pedidoAtual = await getOrderById(pedido_id);
+    const statusAntigo = pedidoAtual.status;
+    const usuario_id = pedidoAtual.usuario_id;
+    
     const pedidoAtualizado = await updateOrderStatus(pedido_id, status, observacoes_admin);
+
+    // 📩 Criar notificação de mudança de status (apenas se o status mudou)
+    if (statusAntigo !== status) {
+      try {
+        await NotificationModel.createStatusChangeNotification(
+          usuario_id, 
+          pedido_id, 
+          statusAntigo, 
+          status
+        );
+        console.log(`📩 Notificação de mudança de status criada para usuário ${usuario_id}`);
+      } catch (notificationError) {
+        console.error('⚠️ Erro ao criar notificação (não crítico):', notificationError.message);
+        // Não falha a atualização se a notificação falhar
+      }
+    }
 
     console.log(`🔄 Status do pedido #${pedido_id} atualizado para "${status}" pelo admin ${req.user.id}`);
 

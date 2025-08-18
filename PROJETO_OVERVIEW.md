@@ -3,10 +3,90 @@
 ## 📊 **Status Atual do Projeto**
 
 ```
-🟢 CONCLUÍDO: Autenticação, Usuários, Produtos, Categorias
-🟡 EM ANDAMENTO: Carrinho, Pedidos, Reviews
-🔴 PENDENTE: Pagamentos, Notificações, Upload de Imagens
+🟢 CONCLUÍDO: Autenticação, Usuários, Produtos, Categorias, Carrinh### **📦 7. Sistema de Pedidos**
 ```
+✅ Criação automática via checkout
+✅ Gestão de status (5 estados)
+✅ Listagem com filtros e paginação
+✅ Busca avançada para admin
+✅ Relatórios estatísticos
+✅ Separação rotas cliente/admin
+✅ Atualização de status pelo admin
+✅ Histórico completo de compras
+```
+
+### **📩 8. Sistema de Notificações**
+```
+✅ CRUD completo de notificações
+✅ Notificações automáticas de pedidos
+✅ Notificações de mudança de status
+✅ Notificações de cupons aplicados
+✅ Criação manual pelo admin
+✅ Listagem com paginação e filtros
+✅ Marcar como lida/não lida
+✅ Estatísticas para usuário
+✅ Segurança por usuário
+✅ Integração total com outros módulos
+✅ Logs e monitoramento
+✅ Validações robustas
+```
+
+**🔄 Fluxo Automático de Notificações:**
+
+**Gatilhos Automáticos:**
+1. **Checkout Finalizado** → "Pedido Confirmado! 🎉" (com número e valor)
+2. **Status Alterado** → "Status do Pedido Atualizado" (com mudança de estado)
+3. **Cupom Aplicado** → "Cupom Aplicado! 🎟️" (com código e economia)
+
+**Gestão Pelo Usuário:**
+1. **Listar** → Paginação, filtros por status, ordenação
+2. **Visualizar** → Detalhes de notificação específica
+3. **Marcar como Lida** → Individual ou todas de uma vez
+4. **Deletar** → Remover notificações antigas
+5. **Estatísticas** → Total, lidas, não lidas
+
+**Administração:**
+1. **Criar Manual** → Admin pode enviar notificações personalizadas
+2. **Monitoramento** → Logs de criação e interação
+3. **Segurança** → Controle por role e por usuário
+
+**Integrações Automáticas:**
+- ✅ **Carrinho** → Notifica ao finalizar compra
+- ✅ **Pedidos** → Notifica mudanças de status
+- ✅ **Cupons** → Notifica aplicação de desconto
+- ✅ **Todos os módulos** → Logs não críticos (não quebram fluxo) Cupons, Notificações
+🟡 EM ANDAMENTO: Reviews
+🔴 PENDENTE: Pagamentos, Upload de Imagens, Dashboard Visual
+```
+
+### **Módulos Completados** ✅
+- **Sistema de Autenticação** - JWT, registro, login, recuperação de senha
+- **Sistema de Usuários** - CRUD completo, perfis, validações
+- **Sistema de Produtos** - CRUD admin, listagem pública, pesquisa avançada
+- **Sistema de Categorias** - CRUD admin, listagem pública, estatísticas
+- **Sistema de Carrinho** - Sessão temporária, checkout robusto, cupons
+- **Sistema de Pedidos** - Criação via checkout, gestão de status, relatórios
+- **Sistema de Cupons** - CRUD admin, aplicação no carrinho, validações avançadas
+- **Sistema de Notificações** - Alertas automáticos, CRUD, integração total
+
+### **Em Desenvolvimento** 🚧
+- **Sistema de Avaliações** - Avaliações e comentários de produtos
+
+### **Pendente** ⏳
+- **Sistema de Pagamentos** - Integração com gateways de pagamento
+- **Dashboard Admin** - Métricas, gráficos e relatórios
+- **Upload de Imagens** - Produtos e avatars de usuário
+- **Integração Frontend** - Interface React/Vue.js
+- **Deploy e Produção** - Configuração de servidor
+
+### **Arquivos de Documentação** 📚
+- `README.md` - Documentação principal
+- `POSTMAN_SETUP.md` - Configuração do ambiente de testes
+- `CART_DOCUMENTATION.md` - Documentação do sistema de carrinho
+- `ORDER_DOCUMENTATION.md` - Documentação do sistema de pedidos
+- `ORDERS_MODULE_COMPLETE.md` - Detalhes da implementação de pedidos
+- `CHECKOUT_ROBUSTO_IMPLEMENTADO.md` - Documentação do checkout
+- `TESTE_CHECKOUT_ROBUSTO.md` - Testes do checkout
 
 ---
 
@@ -74,6 +154,71 @@ backend/
 ✅ Validação completa
 ```
 
+### **🛒 5. Sistema de Carrinho**
+```
+✅ Carrinho em sessão (temporário)
+✅ Adicionar/remover produtos
+✅ Atualizar quantidades
+✅ Validação de estoque em tempo real
+✅ Cálculo automático de totais
+✅ Checkout robusto com endereço completo
+✅ Processamento de cupons de desconto
+✅ Integração com express-session
+```
+
+### **🎟️ 6. Sistema de Cupons**
+```
+✅ CRUD admin de cupons (criar, listar, editar, deletar)
+✅ Tipos de desconto (percentual e valor fixo)
+✅ Validação de datas (válido até, criação automática)
+✅ Controle de uso (limite de usos por cupom)
+✅ Controle de uso por usuário (um cupom por usuário)
+✅ Aplicação dinâmica no carrinho
+✅ Remoção de cupons do carrinho
+✅ Verificação pública de cupons
+✅ Listagem de cupons ativos (público)
+✅ Estatísticas para dashboard admin
+✅ Integração completa com checkout
+✅ Rastreamento de uso via tabela cupons_usuarios
+```
+
+**� Fluxo das Funcionalidades de Cupons:**
+
+**Admin - Gestão de Cupons:**
+1. **Criar Cupom** → Admin define código, tipo (%), valor, data limite, uso máximo
+2. **Listar Cupons** → Admin vê todos os cupons com estatísticas de uso
+3. **Editar Cupom** → Admin pode alterar dados (exceto código usado)
+4. **Deletar Cupom** → Admin remove cupons (soft delete)
+5. **Estatísticas** → Admin vê relatórios de uso e performance
+
+**Cliente - Uso de Cupons:**
+1. **Verificar Cupom** (público) → Cliente valida se cupom existe e é válido
+2. **Aplicar no Carrinho** → Sistema valida regras e aplica desconto automaticamente
+3. **Visualizar Desconto** → Cliente vê valor original, desconto e total final
+4. **Remover Cupom** → Cliente pode desfazer aplicação antes do checkout
+5. **Finalizar Compra** → Cupom é marcado como usado e vinculado ao usuário
+
+**Validações Automáticas:**
+- ❌ Cupom inexistente ou inativo
+- ❌ Cupom expirado (data limite)
+- ❌ Cupom já usado pelo usuário
+- ❌ Cupom atingiu limite máximo de usos
+- ❌ Carrinho vazio ao aplicar cupom
+- ✅ Recálculo automático de totais
+- ✅ Prevenção de uso duplicado
+
+### **�📦 7. Sistema de Pedidos**
+```
+✅ Criação automática via checkout
+✅ Gestão de status (5 estados)
+✅ Listagem com filtros e paginação
+✅ Busca avançada para admin
+✅ Relatórios estatísticos
+✅ Separação rotas cliente/admin
+✅ Atualização de status pelo admin
+✅ Histórico completo de compras
+```
+
 ---
 
 ## 📋 **Banco de Dados Atual**
@@ -83,11 +228,17 @@ backend/
 👥 usuarios (id, nome, email, senha, tipo, telefone, endereco)
 📦 produtos (id, nome, descricao, preco, estoque, imagem, categoria_id)
 🏷️ categorias (id, nome, descricao)
-🔑 password_resets (token, email, created_at)
+🎟️ cupons (id, codigo, tipo, valor, validade, limite_uso, ativo, created_at, updated_at)
+🔗 cupons_usuarios (id, cupom_id, usuario_id, usado_em)
+� notificacoes (id, usuario_id, titulo, mensagem, lida, criado_em)
+�🔑 password_resets (token, email, created_at)
 ```
 
 ### **Relacionamentos:**
 - `produtos.categoria_id` → `categorias.id` (Many-to-One)
+- `cupons_usuarios.cupom_id` → `cupons.id` (Many-to-One)
+- `cupons_usuarios.usuario_id` → `usuarios.id` (Many-to-One)
+- `notificacoes.usuario_id` → `usuarios.id` (Many-to-One)
 - `password_resets.email` → `usuarios.email` (One-to-One)
 
 ---
@@ -135,6 +286,50 @@ DELETE /:id             # Deletar categoria
 GET /stats              # Estatísticas
 ```
 
+### **⚙️ Admin - Cupons (`/api/admin/coupons`)**
+```
+GET /                   # Listar cupons (admin)
+POST /                  # Criar cupom
+GET /:id                # Buscar cupom por ID
+PUT /:id                # Atualizar cupom completo
+PATCH /:id              # Atualizar cupom parcial
+DELETE /:id             # Deletar cupom (soft delete)
+GET /stats              # Estatísticas de cupons
+```
+
+### **🛒 Cliente - Carrinho (`/api/client/cart`)**
+```
+GET /                   # Visualizar carrinho
+POST /                  # Adicionar produto
+PATCH /:produto_id      # Atualizar quantidade
+DELETE /:produto_id     # Remover produto
+DELETE /                # Limpar carrinho
+POST /apply-coupon      # Aplicar cupom
+DELETE /remove-coupon   # Remover cupom
+POST /checkout          # Finalizar compra
+```
+
+### **🎟️ Cupons Públicos (`/api/coupons`)**
+```
+GET /                   # Listar cupons ativos (público)
+POST /verify            # Verificar cupom (público)
+```
+
+### **📩 Cliente - Notificações (`/api/client/notifications`)**
+```
+GET /                   # Listar notificações
+GET /stats              # Estatísticas das notificações
+GET /:id                # Obter notificação específica
+PATCH /:id/read         # Marcar como lida
+PATCH /read-all         # Marcar todas como lidas
+DELETE /:id             # Deletar notificação
+```
+
+### **⚙️ Admin - Notificações (`/api/admin/notifications`)**
+```
+POST /                  # Criar notificação manual (admin)
+```
+
 ---
 
 ## 🎯 **Próximos Passos**
@@ -172,15 +367,15 @@ GET /stats              # Estatísticas
 ## 📈 **Métricas do Projeto**
 
 ### **Arquivos Criados:**
-- ✅ **15+ Controllers** (auth, user, product, category)
-- ✅ **10+ Models** (database queries)
-- ✅ **8+ Routes** (public + admin)
-- ✅ **6+ Migrations** (database schema)
-- ✅ **4+ Middlewares** (auth, validation)
+- ✅ **25+ Controllers** (auth, user, product, category, coupon, cart, order, notification)
+- ✅ **20+ Models** (database queries + validations + business logic)
+- ✅ **15+ Routes** (public + admin + client)
+- ✅ **12+ Migrations** (database schema)
+- ✅ **8+ Middlewares** (auth, validation, roles)
 
-### **Linhas de Código:** ~2000+ LOC
-### **Endpoints:** 25+ rotas funcionais
-### **Tabelas:** 4 tabelas principais
+### **Linhas de Código:** ~4500+ LOC
+### **Endpoints:** 50+ rotas funcionais
+### **Tabelas:** 7 tabelas principais
 
 ---
 
@@ -223,9 +418,10 @@ DADOS_TESTE_CATEGORIAS.sql
 ## 🎯 **Objetivo Final**
 
 Criar um **e-commerce completo** com:
-- ✅ **Backend robusto** (autenticação, produtos, categorias)
-- 🟡 **Funcionalidades de compra** (carrinho, pedidos, pagamentos)
+- ✅ **Backend robusto** (autenticação, produtos, categorias, cupons, notificações)
+- ✅ **Funcionalidades de compra** (carrinho, pedidos, descontos, alertas)
+- 🔴 **Sistema de pagamentos** (gateways, processamento)
 - 🔴 **Interface admin** (dashboard, relatórios)
 - 🔴 **Frontend responsivo** (React/Vue)
 
-**Status:** ~60% concluído do MVP básico! 🚀
+**Status:** ~85% concluído do MVP básico! 🚀

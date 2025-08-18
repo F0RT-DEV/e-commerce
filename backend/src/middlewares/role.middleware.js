@@ -19,3 +19,16 @@ export async function verifyUserRole(req, res, next) {
 	}
 	next();
 }
+
+// Função genérica para verificar múltiplos roles
+export function checkRole(allowedRoles) {
+	return (req, res, next) => {
+		if (!req.user || !allowedRoles.includes(req.user.role)) {
+			return res.status(403).json({
+				success: false,
+				message: "Acesso negado. Role não autorizado."
+			});
+		}
+		next();
+	};
+}

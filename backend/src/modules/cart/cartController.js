@@ -1,5 +1,6 @@
 import { addToCartSchema, updateCartItemSchema, checkoutSchema } from './cartSchema.js';
 import { getProductForCart, checkProductStock, createOrderFromCart, calculateCartTotals } from './cartModel.js';
+import { NotificationModel } from '../notification/notificationModel.js';
 
 // 🛒 CARRINHO EM SESSÃO (temporário)
 // Cada usuário tem um carrinho em memória que persiste durante a sessão
@@ -74,7 +75,10 @@ export const addToCart = async (req, res) => {
 export const getCart = async (req, res) => {
   try {
     const cart = req.session.cart || [];
-    const cartWithTotals = calculateCartTotals(cart);
+    
+    // Incluir informações de cupom se houver
+    const cupomInfo = req.session.cart?.cupom || null;
+    const cartWithTotals = calculateCartTotals(cart, cupomInfo);
 
     console.log(`👀 Carrinho visualizado: ${cartWithTotals.total_itens} itens`);
 
@@ -242,6 +246,19 @@ export const checkout = async (req, res) => {
 
     // Converter carrinho em pedido com dados completos
     const pedidoResult = await createOrderFromCart(usuario_id, cart, value);
+
+    // 📩 Criar notificação de pedido confirmado
+    try {
+      await NotificationModel.createOrderNotification(
+        usuario_id, 
+        pedidoResult.pedido_id, 
+        pedidoResult.total
+      );
+      console.log(`📩 Notificação de pedido criada para usuário ${usuario_id}`);
+    } catch (notificationError) {
+      console.error('⚠️ Erro ao criar notificação (não crítico):', notificationError.message);
+      // Não falha o checkout se a notificação falhar
+    }
 
     // Limpar carrinho após compra
     req.session.cart = [];

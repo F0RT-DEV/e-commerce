@@ -1,4 +1,5 @@
 import db from '../../db.js';
+import { CouponModel } from '../coupon/couponModel.js';
 
 // 🛒 CARRINHO TEMPORÁRIO (em memória, não no banco)
 // Quando finalizar compra, vira pedido nas tabelas: pedidos + pedido_itens
@@ -69,11 +70,17 @@ export const createOrderFromCart = async (usuario_id, cartItems, checkoutData) =
 
     // 3. Processar cupom de desconto (se fornecido)
     let valor_desconto = 0;
+    let cupom_usado = null;
+    
     if (checkoutData.coupon) {
-      // TODO: Implementar lógica de cupons
-      // Por enquanto, exemplo com 10% de desconto para cupons válidos
-      if (checkoutData.coupon === 'DESCONTO10') {
-        valor_desconto = subtotal * 0.1;
+      const validation = await CouponModel.validateCoupon(checkoutData.coupon, usuario_id);
+      if (validation.valid) {
+        valor_desconto = CouponModel.calculateDiscount(validation.cupom, subtotal);
+        cupom_usado = validation.cupom;
+        console.log(`🎟️ Cupom ${checkoutData.coupon} aplicado: desconto de R$ ${valor_desconto.toFixed(2)}`);
+      } else {
+        console.log(`❌ Cupom ${checkoutData.coupon} inválido: ${validation.message}`);
+        // Não aplicar desconto, mas continuar com o pedido
       }
     }
 
@@ -103,7 +110,7 @@ export const createOrderFromCart = async (usuario_id, cartItems, checkoutData) =
       
       // Dados adicionais
       metodo_pagamento: checkoutData.payment_method,
-      codigo_cupom: checkoutData.coupon || null,
+      codigo_cupom: cupom_usado ? cupom_usado.codigo : null,
       observacoes: checkoutData.observacoes || null,
       
       criado_em: new Date()
@@ -124,6 +131,12 @@ export const createOrderFromCart = async (usuario_id, cartItems, checkoutData) =
       await trx('produtos')
         .where({ id: item.produto_id })
         .decrement('estoque', item.quantidade);
+    }
+
+    // 9. Registrar uso do cupom (se aplicado)
+    if (cupom_usado) {
+      await CouponModel.applyCoupon(cupom_usado.id, usuario_id, pedido_id);
+      console.log(`🎟️ Uso do cupom ${cupom_usado.codigo} registrado para o pedido ${pedido_id}`);
     }
 
     await trx.commit();
@@ -152,7 +165,7 @@ export const createOrderFromCart = async (usuario_id, cartItems, checkoutData) =
 };
 
 // 📊 Calcular totais do carrinho
-export const calculateCartTotals = (cartItems) => {
+export const calculateCartTotals = (cartItems, cupomInfo = null) => {
   let total = 0;
   let totalItens = 0;
 
@@ -167,9 +180,37 @@ export const calculateCartTotals = (cartItems) => {
     };
   });
 
-  return {
+  // Calcular desconto se houver cupom
+  let desconto = 0;
+  let totalComDesconto = total;
+  
+  if (cupomInfo) {
+    if (cupomInfo.tipo === 'percentual') {
+      desconto = Math.round((total * cupomInfo.valor / 100) * 100) / 100;
+    } else {
+      desconto = Math.min(cupomInfo.valor, total);
+    }
+    totalComDesconto = Math.max(0, total - desconto);
+  }
+
+  const result = {
     itens: itemsWithSubtotal,
     total_itens: totalItens,
+    subtotal: parseFloat(total.toFixed(2)),
     total: parseFloat(total.toFixed(2))
   };
+
+  // Adicionar informações de cupom se aplicável
+  if (cupomInfo) {
+    result.cupom = {
+      codigo: cupomInfo.codigo,
+      tipo: cupomInfo.tipo,
+      valor: cupomInfo.valor,
+      desconto: parseFloat(desconto.toFixed(2))
+    };
+    result.total_com_desconto = parseFloat(totalComDesconto.toFixed(2));
+    result.desconto_aplicado = parseFloat(desconto.toFixed(2));
+  }
+
+  return result;
 };

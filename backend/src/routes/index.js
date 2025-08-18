@@ -5,9 +5,13 @@ import productRoutes from "./products.routes.js";
 import categoryRoutes from "./categories.routes.js";
 import adminProductRoutes from "./admin/products.routes.js";
 import adminCategoryRoutes from "./admin/categories.routes.js";
+import adminCouponRoutes from "./admin/coupons.routes.js";
 import adminOrderRoutes from "./admin/orders.routes.js";
+import adminNotificationRoutes from "./admin/notifications.routes.js";
 import cartRoutes from "./client/cart.routes.js";
 import clientOrderRoutes from "./client/orders.routes.js";
+import clientNotificationRoutes from "./client/notifications.routes.js";
+import clientCouponRoutes from "./client/coupons.routes.js";
 
 const router = Router();
 
@@ -51,9 +55,17 @@ console.log(`✅ Rotas admin de produtos: ${API_CONFIG.prefix}${API_CONFIG.admin
 router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`, adminCategoryRoutes);
 console.log(`✅ Rotas admin de categorias: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/categories`);
 
+// Rotas de administração - cupons
+router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/coupons`, adminCouponRoutes);
+console.log(`✅ Rotas admin de cupons: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/coupons`);
+
 // Rotas de administração - pedidos
 router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/orders`, adminOrderRoutes);
 console.log(`✅ Rotas admin de pedidos: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/orders`);
+
+// Rotas de administração - notificações
+router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/notifications`, adminNotificationRoutes);
+console.log(`✅ Rotas admin de notificações: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/notifications`);
 
 // Rotas do cliente - carrinho
 router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/cart`, cartRoutes);
@@ -62,6 +74,14 @@ console.log(`✅ Rotas do carrinho: ${API_CONFIG.prefix}${API_CONFIG.client.base
 // Rotas do cliente - pedidos
 router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/orders`, clientOrderRoutes);
 console.log(`✅ Rotas de pedidos do cliente: ${API_CONFIG.prefix}${API_CONFIG.client.base}/orders`);
+
+// Rotas do cliente - notificações
+router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/notifications`, clientNotificationRoutes);
+console.log(`✅ Rotas de notificações do cliente: ${API_CONFIG.prefix}${API_CONFIG.client.base}/notifications`);
+
+// Rotas públicas - cupons
+router.use(`${API_CONFIG.prefix}/coupons`, clientCouponRoutes);
+console.log(`✅ Rotas de cupons: ${API_CONFIG.prefix}/coupons`);
 
 // Middleware para rotas não encontradas
 router.use('*', (req, res) => {

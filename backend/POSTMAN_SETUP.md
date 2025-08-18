@@ -40,6 +40,20 @@ POST {{rota}}/reset-password         # Redefinir senha
 POST {{rota}}/test                   # Teste de rota
 ```
 
+### **📋 Headers para Rotas Autenticadas:**
+Para todas as rotas que requerem autenticação, adicione os seguintes headers:
+
+```
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+```
+
+**🔐 Rotas que precisam de token:**
+- Todas as rotas em `{{rota}}/me/*` (perfil, senha, email, stats, deletar)
+- Todas as rotas em `{{adminURL}}/*` (administração)
+- Todas as rotas em `{{clientURL}}/*` (carrinho, notificações, pedidos)
+- Rota de verificar cupom: `{{baseURL}}/api/coupons/verify`
+
 ## 🔐 **Autenticação Automática**
 
 A requisição de **Login** está configurada para:
@@ -104,6 +118,109 @@ POST {{rota}}/reset-password   # Redefinir senha
 POST {{rota}}/test             # Teste de rota
 ```
 
+#### **Registrar Usuário:**
+```json
+POST {{rota}}/register
+{
+  "nome": "João Silva",
+  "email": "joao@email.com",
+  "senha": "123456789",
+  "tipo": "cliente",
+  "telefone": "(11) 99999-9999",
+  "endereco": {
+    "cep": "01234-567",
+    "rua": "Rua das Flores",
+    "numero": "123",
+    "complemento": "Apto 45",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP"
+  }
+}
+```
+
+#### **Login:**
+```json
+POST {{rota}}/login
+{
+  "email": "joao@email.com",
+  "senha": "123456789"
+}
+```
+
+#### **Atualizar Perfil:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{rota}}/me
+{
+  "nome": "João Santos Silva",
+  "telefone": "(11) 88888-8888",
+  "endereco": {
+    "cep": "04567-890",
+    "rua": "Av. Paulista",
+    "numero": "1000",
+    "bairro": "Bela Vista",
+    "cidade": "São Paulo",
+    "estado": "SP"
+  }
+}
+```
+
+#### **Atualizar Senha:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{rota}}/me/password
+{
+  "senha_atual": "123456789",
+  "nova_senha": "novaSenha123"
+}
+```
+
+#### **Atualizar Email:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{rota}}/me/email
+{
+  "novo_email": "joao.novo@email.com",
+  "senha": "novaSenha123"
+}
+```
+
+#### **Esqueci Minha Senha:**
+```json
+POST {{rota}}/forgot-password
+{
+  "email": "joao@email.com"
+}
+```
+
+#### **Redefinir Senha:**
+```json
+POST {{rota}}/reset-password
+{
+  "token": "token_recebido_por_email",
+  "nova_senha": "senhaNova123"
+}
+```
+
 ### **Administração:**
 ```
 GET    {{adminURL}}/products         # Listar produtos (admin)
@@ -117,6 +234,126 @@ POST   {{adminURL}}/categories       # Criar categoria (admin)
 PATCH  {{adminURL}}/categories/:id   # Atualizar categoria (admin)
 DELETE {{adminURL}}/categories/:id   # Deletar categoria (admin)
 GET    {{adminURL}}/categories/stats # Estatísticas categorias (admin)
+
+GET    {{adminURL}}/coupons          # Listar cupons (admin)
+POST   {{adminURL}}/coupons          # Criar cupom (admin)
+GET    {{adminURL}}/coupons/stats    # Estatísticas cupons (admin)
+GET    {{adminURL}}/coupons/:id      # Buscar cupom por ID (admin)
+PUT    {{adminURL}}/coupons/:id      # Atualizar cupom (admin)
+PATCH  {{adminURL}}/coupons/:id      # Atualizar cupom parcial (admin)
+DELETE {{adminURL}}/coupons/:id      # Deletar cupom (admin)
+```
+
+#### **Criar Produto (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{adminURL}}/products
+{
+  "nome": "Smartphone Galaxy S24",
+  "descricao": "Smartphone top de linha com 256GB",
+  "preco": 2999.99,
+  "estoque": 50,
+  "categoria_id": 1,
+  "imagem": "https://example.com/galaxy-s24.jpg"
+}
+```
+
+#### **Atualizar Produto (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PUT {{adminURL}}/products/1
+{
+  "nome": "Smartphone Galaxy S24 Ultra",
+  "descricao": "Versão Ultra com 512GB",
+  "preco": 3999.99,
+  "estoque": 30,
+  "categoria_id": 1,
+  "imagem": "https://example.com/galaxy-s24-ultra.jpg"
+}
+```
+
+#### **Criar Categoria (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{adminURL}}/categories
+{
+  "nome": "Eletrônicos",
+  "descricao": "Produtos eletrônicos em geral"
+}
+```
+
+#### **Atualizar Categoria (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{adminURL}}/categories/1
+{
+  "nome": "Eletrônicos e Tecnologia",
+  "descricao": "Smartphones, tablets, notebooks e acessórios"
+}
+```
+
+#### **Criar Cupom (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{adminURL}}/coupons
+{
+  "codigo": "DESCONTO20",
+  "tipo": "percentual",
+  "valor": 20,
+  "validade": "2025-12-31",
+  "limite_uso": 100,
+  "ativo": true
+}
+```
+
+#### **Atualizar Cupom (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PUT {{adminURL}}/coupons/1
+{
+  "codigo": "DESCONTO25",
+  "tipo": "percentual", 
+  "valor": 25,
+  "validade": "2025-12-31",
+  "limite_uso": 200,
+  "ativo": true
+}
 ```
 
 ### **Produtos Públicos:**
@@ -139,13 +376,354 @@ POST {{clientURL}}/cart              # Adicionar produto ao carrinho
 PATCH {{clientURL}}/cart/:produto_id # Atualizar quantidade
 DELETE {{clientURL}}/cart/:produto_id # Remover item do carrinho
 DELETE {{clientURL}}/cart            # Limpar carrinho
+POST {{clientURL}}/cart/apply-coupon # Aplicar cupom ao carrinho
+DELETE {{clientURL}}/cart/remove-coupon # Remover cupom do carrinho
 POST {{clientURL}}/cart/checkout     # Finalizar compra
+```
+
+#### **Adicionar ao Carrinho:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{clientURL}}/cart
+{
+  "produto_id": 1,
+  "quantidade": 2
+}
+```
+
+#### **Atualizar Quantidade:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{clientURL}}/cart/1
+{
+  "quantidade": 3
+}
+```
+
+#### **Finalizar Compra (Checkout):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{clientURL}}/cart/checkout
+{
+  "shipping_address": {
+    "cep": "01234-567",
+    "rua": "Rua das Flores",
+    "numero": "123",
+    "complemento": "Apto 45",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP"
+  },
+  "payment_method": "cartao_credito",
+  "coupon": "DESCONTO10",
+  "observacoes": "Entrega pela manhã"
+}
+```
+
+### **Corpo das Requisições:**
+
+#### **Aplicar Cupom ao Carrinho:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{clientURL}}/cart/apply-coupon
+{
+  "codigo": "DESCONTO10"
+}
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Cupom aplicado com sucesso",
+  "data": {
+    "cupom": {
+      "codigo": "DESCONTO10",
+      "tipo": "percentual",
+      "valor": 10,
+      "desconto": 25.99
+    },
+    "carrinho": {
+      "itens": [...],
+      "total_itens": 2,
+      "subtotal": 259.90,        // 💰 Valor original
+      "total": 259.90,           // 💰 Valor original
+      "cupom": {
+        "codigo": "DESCONTO10",
+        "tipo": "percentual", 
+        "valor": 10,
+        "desconto": 25.99       // 💸 Valor do desconto
+      },
+      "total_com_desconto": 233.91,  // ✅ Valor final (com desconto)
+      "desconto_aplicado": 25.99     // 💸 Desconto aplicado
+    }
+  }
+}
+```
+
+**📝 Explicação dos Campos:**
+- `subtotal` / `total`: Valor original do carrinho
+- `desconto_aplicado`: Valor em R$ que foi descontado
+- `total_com_desconto`: **Valor final que o cliente pagará**
+
+#### **Remover Cupom do Carrinho:**
+```json
+DELETE {{clientURL}}/cart/remove-coupon
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Cupom removido do carrinho",
+  "data": {
+    "carrinho": {
+      "itens": [...],
+      "total_itens": 2,
+      "subtotal": 259.90,
+      "total": 259.90
+    }
+  }
+}
+```
+
+### **Cupons Públicos:**
+```
+GET  {{baseURL}}/api/coupons         # Listar cupons ativos (público)
+```
+
+### **Cupons (Autenticado):**
+```
+POST {{baseURL}}/api/coupons/verify  # Verificar cupom (requer auth)
+```
+
+#### **Verificar Cupom:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{baseURL}}/api/coupons/verify
+{
+  "codigo": "DESCONTO10"
+}
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Cupom válido",
+  "data": {
+    "cupom": {
+      "id": 1,
+      "codigo": "DESCONTO10",
+      "tipo": "percentual",
+      "valor": "10.00",
+      "validade": "2025-12-31T23:59:59.000Z"
+    }
+  }
+}
 ```
 
 ### **Cliente (futuras):**
 ```
 GET  {{clientURL}}/orders        # Pedidos
 POST {{clientURL}}/orders        # Criar pedido
+```
+
+### **📩 Cliente - Notificações (`/api/client/notifications`)**
+```
+GET {{clientURL}}/notifications      # Listar notificações do usuário
+PATCH {{clientURL}}/notifications/:id/read # Marcar como lida
+DELETE {{clientURL}}/notifications/:id # Excluir notificação
+PATCH {{clientURL}}/notifications/read-all # Marcar todas como lidas
+POST {{clientURL}}/notifications/mark-all-read # Marcar todas como lidas (alias)
+GET {{clientURL}}/notifications/stats # Estatísticas das notificações
+```
+
+#### **Marcar Notificação como Lida:**
+```
+Headers:
+Authorization: Bearer {{authToken}}
+
+Body: (Sem body necessário)
+```
+```json
+PATCH {{clientURL}}/notifications/1/read
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Notificação marcada como lida"
+}
+```
+
+#### **Marcar Todas as Notificações como Lidas:**
+```
+Headers:
+Authorization: Bearer {{authToken}}
+
+Body: (Sem body necessário)
+```
+
+**Opção 1 (PATCH):**
+```json
+PATCH {{clientURL}}/notifications/read-all
+```
+
+**Opção 2 (POST - alias):**
+```json
+POST {{clientURL}}/notifications/mark-all-read
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Todas as notificações foram marcadas como lidas",
+  "data": {
+    "updated_count": 5
+  }
+}
+```
+
+### **🔔 Administração - Notificações (`/api/admin/notifications`)**
+```
+GET {{adminURL}}/notifications      # Listar todas notificações (admin)
+POST {{adminURL}}/notifications     # Criar notificação (admin)
+PATCH {{adminURL}}/notifications/:id # Atualizar notificação (admin)
+DELETE {{adminURL}}/notifications/:id # Deletar notificação (admin)
+GET {{adminURL}}/notifications/stats # Estatísticas globais (admin)
+```
+
+#### **Criar Notificação (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{adminURL}}/notifications
+{
+  "usuario_id": 1,
+  "titulo": "Oferta Especial",
+  "mensagem": "Aproveite 20% de desconto em eletrônicos!",
+  "tipo": "promocao"
+}
+```
+
+#### **Atualizar Notificação (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{adminURL}}/notifications/1
+{
+  "titulo": "Oferta Imperdível - Atualizada",
+  "mensagem": "Agora com 30% de desconto em eletrônicos!",
+  "lida": true
+}
+```
+
+### **📦 Cliente - Pedidos (Em Desenvolvimento):**
+```
+GET  {{clientURL}}/orders        # Listar pedidos do usuário
+GET  {{clientURL}}/orders/:id    # Detalhes do pedido
+```
+
+## **🎯 Exemplos de Uso Completo**
+
+### **Fluxo Completo de Compra:**
+
+1. **Registrar usuário**
+2. **Fazer login**
+3. **Adicionar produtos ao carrinho**
+4. **Aplicar cupom**
+5. **Finalizar compra**
+
+### **Códigos de Status HTTP:**
+- `200` - Sucesso
+- `201` - Criado com sucesso
+- `400` - Erro de validação
+- `401` - Não autorizado
+- `403` - Acesso negado
+- `404` - Não encontrado
+- `409` - Conflito (ex: cupom já usado)
+- `500` - Erro interno do servidor
+
+### **⚡ Dicas de Uso:**
+- ✅ **Headers Obrigatórios para Rotas Autenticadas:**
+  - `Content-Type: application/json`
+  - `Authorization: Bearer {{authToken}}`
+- ✅ Para rotas de admin, o usuário deve ter `role: 'admin'`
+- ✅ Cupons têm validação de data, limite de uso e status ativo
+- ✅ Notificações são criadas automaticamente para ações importantes (checkout, mudança de status, etc.)
+- ✅ Use o environment correto (Development/Production) antes de fazer as requisições
+- ✅ Faça login primeiro para obter o token automaticamente
+
+---
+
+**🚀 Sistema de E-commerce com Cupons e Notificações - Pronto para uso!**
+      {
+        "id": 1,
+        "usuario_id": 1,
+        "titulo": "Pedido Confirmado! 🎉",
+        "mensagem": "Seu pedido #123 foi confirmado com sucesso!",
+        "lida": false,
+        "criado_em": "2025-08-17T10:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 10,
+      "total": 15,
+      "total_pages": 2,
+      "has_next": true,
+      "has_prev": false
+    },
+    "stats": {
+      "total": 15,
+      "lidas": 8,
+      "nao_lidas": 7
+    }
+  }
+}
 ```
 
 ## 🔧 **Configuração Manual**
