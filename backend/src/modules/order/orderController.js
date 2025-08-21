@@ -7,6 +7,7 @@ import {
 import { 
   getOrdersByUser, 
   getOrderById, 
+  getOrderByIdAdmin,
   updateOrderStatus,
   getAllOrders,
   getOrderStats 
@@ -101,8 +102,8 @@ export const updateOrderStatusAdmin = async (req, res) => {
 
     const { status, observacoes_admin } = value;
     
-    // Buscar pedido atual para obter o status anterior e usuario_id
-    const pedidoAtual = await getOrderById(pedido_id);
+    // Buscar pedido atual para obter o status anterior e usuario_id (Admin)
+    const pedidoAtual = await getOrderByIdAdmin(pedido_id);
     const statusAntigo = pedidoAtual.status;
     const usuario_id = pedidoAtual.usuario_id;
     
@@ -206,7 +207,7 @@ export const getOrderReports = async (req, res) => {
 };
 
 // 🔍 Buscar pedido específico (Admin)
-export const getOrderByIdAdmin = async (req, res) => {
+export const getOrderDetailsAdmin = async (req, res) => {
   try {
     const pedido_id = parseInt(req.params.id);
     if (!pedido_id) {

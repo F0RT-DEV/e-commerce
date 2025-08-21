@@ -12,6 +12,8 @@ import cartRoutes from "./client/cart.routes.js";
 import clientOrderRoutes from "./client/orders.routes.js";
 import clientNotificationRoutes from "./client/notifications.routes.js";
 import clientCouponRoutes from "./client/coupons.routes.js";
+import clientReviewRoutes from "./client/reviews.routes.js";
+import publicReviewRoutes from "./public/reviews.routes.js";
 
 const router = Router();
 
@@ -47,6 +49,10 @@ console.log(`✅ Rotas de produtos: ${API_CONFIG.prefix}${API_CONFIG.public.base
 router.use(`${API_CONFIG.prefix}${API_CONFIG.public.base}/categories`, categoryRoutes);
 console.log(`✅ Rotas de categorias: ${API_CONFIG.prefix}${API_CONFIG.public.base}/categories`);
 
+// Rotas públicas de avaliações
+router.use(`${API_CONFIG.prefix}${API_CONFIG.public.base}/products`, publicReviewRoutes);
+console.log(`✅ Rotas de avaliações públicas: ${API_CONFIG.prefix}${API_CONFIG.public.base}/products`);
+
 // Rotas de administração - produtos
 router.use(`${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`, adminProductRoutes);
 console.log(`✅ Rotas admin de produtos: ${API_CONFIG.prefix}${API_CONFIG.admin.base}/products`);
@@ -78,6 +84,10 @@ console.log(`✅ Rotas de pedidos do cliente: ${API_CONFIG.prefix}${API_CONFIG.c
 // Rotas do cliente - notificações
 router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}/notifications`, clientNotificationRoutes);
 console.log(`✅ Rotas de notificações do cliente: ${API_CONFIG.prefix}${API_CONFIG.client.base}/notifications`);
+
+// Rotas do cliente - avaliações
+router.use(`${API_CONFIG.prefix}${API_CONFIG.client.base}`, clientReviewRoutes);
+console.log(`✅ Rotas de avaliações do cliente: ${API_CONFIG.prefix}${API_CONFIG.client.base}`);
 
 // Rotas públicas - cupons
 router.use(`${API_CONFIG.prefix}/coupons`, clientCouponRoutes);

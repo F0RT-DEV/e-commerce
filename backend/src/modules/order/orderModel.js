@@ -113,7 +113,44 @@ export const getOrderById = async (pedido_id, usuario_id) => {
   }
 };
 
-// 🔄 Atualizar status do pedido (Admin)
+// � Buscar pedido por ID (Admin - sem restrição de usuário)
+export const getOrderByIdAdmin = async (pedido_id) => {
+  try {
+    const pedido = await db('pedidos')
+      .select('*')
+      .where({ id: pedido_id })
+      .first();
+
+    if (!pedido) {
+      throw new Error('Pedido não encontrado');
+    }
+
+    // Buscar itens do pedido
+    const itens = await db('pedido_itens as pi')
+      .join('produtos as p', 'pi.produto_id', 'p.id')
+      .select(
+        'pi.id',
+        'pi.produto_id', 
+        'pi.quantidade',
+        'pi.preco_unitario',
+        'p.nome',
+        'p.descricao',
+        'p.imagem',
+        db.raw('(pi.quantidade * pi.preco_unitario) as subtotal')
+      )
+      .where('pi.pedido_id', pedido_id);
+
+    pedido.itens = itens;
+    pedido.total_itens = itens.reduce((sum, item) => sum + item.quantidade, 0);
+
+    return pedido;
+
+  } catch (error) {
+    throw new Error(`Erro ao buscar pedido: ${error.message}`);
+  }
+};
+
+// �🔄 Atualizar status do pedido (Admin)
 export const updateOrderStatus = async (pedido_id, status, observacoes_admin = null) => {
   try {
     const pedido = await db('pedidos').where({ id: pedido_id }).first();

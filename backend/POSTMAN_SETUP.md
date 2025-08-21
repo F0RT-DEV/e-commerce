@@ -235,6 +235,11 @@ PATCH  {{adminURL}}/categories/:id   # Atualizar categoria (admin)
 DELETE {{adminURL}}/categories/:id   # Deletar categoria (admin)
 GET    {{adminURL}}/categories/stats # Estatísticas categorias (admin)
 
+GET    {{adminURL}}/orders           # Listar pedidos (admin)
+GET    {{adminURL}}/orders/:id       # Buscar pedido específico (admin)
+PATCH  {{adminURL}}/orders/:id/status # Atualizar status do pedido (admin)
+GET    {{adminURL}}/orders/reports   # Relatórios de pedidos (admin)
+
 GET    {{adminURL}}/coupons          # Listar cupons (admin)
 POST   {{adminURL}}/coupons          # Criar cupom (admin)
 GET    {{adminURL}}/coupons/stats    # Estatísticas cupons (admin)
@@ -355,6 +360,89 @@ PUT {{adminURL}}/coupons/1
   "ativo": true
 }
 ```
+
+#### **Listar Pedidos (Admin):**
+```
+Headers:
+Authorization: Bearer {{authToken}}
+```
+```json
+GET {{adminURL}}/orders?page=1&limit=20&status=pendente
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "message": "Pedidos listados com sucesso",
+  "pedidos": [
+    {
+      "id": 3,
+      "usuario_id": 3,
+      "usuario_nome": "João Silva",
+      "usuario_email": "joao@email.com",
+      "subtotal": "3799.98",
+      "valor_desconto": "760.00",
+      "valor_frete": "15.00",
+      "total": "3054.98",
+      "status": "pendente",
+      "metodo_pagamento": "credit_card",
+      "codigo_cupom": "DESCONTO20",
+      "endereco_cidade": "São Paulo",
+      "endereco_estado": "SP",
+      "criado_em": "2025-08-18T22:51:42.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 3,
+    "pages": 1
+  }
+}
+```
+
+#### **Atualizar Status do Pedido (Admin):**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PATCH {{adminURL}}/orders/3/status
+{
+  "status": "enviado",
+  "observacoes_admin": "Pedido enviado via transportadora. Prazo de entrega: 3-5 dias úteis."
+}
+```
+
+**Status Válidos:**
+- `pendente` - Pedido criado, aguardando processamento
+- `processando` - Pedido sendo preparado
+- `enviado` - Pedido enviado (necessário para permitir avaliações)
+- `entregue` - Pedido entregue ao cliente
+- `cancelado` - Pedido cancelado
+
+**Resposta de Sucesso:**
+```json
+{
+  "message": "Status do pedido atualizado com sucesso",
+  "pedido": {
+    "id": 3,
+    "usuario_id": 3,
+    "total": "3054.98",
+    "status": "enviado",
+    "metodo_pagamento": "credit_card",
+    "atualizado_em": "2025-08-18T23:20:00.000Z"
+  }
+}
+```
+
+**📝 Importante para Avaliações:**
+- Para que o cliente possa fazer avaliações de produtos, o pedido deve estar com status **"enviado"** ou **"entregue"**
+- Quando o status muda para "enviado", uma notificação é criada automaticamente para o cliente
+- O sistema de avaliações verifica se o usuário já comprou o produto antes de permitir a avaliação
 
 ### **Produtos Públicos:**
 ```
@@ -666,6 +754,175 @@ PATCH {{adminURL}}/notifications/1
 GET  {{clientURL}}/orders        # Listar pedidos do usuário
 GET  {{clientURL}}/orders/:id    # Detalhes do pedido
 ```
+
+### **⭐ Avaliações de Produtos**
+
+#### **📋 Públicas (Visualizar avaliações):**
+```
+GET {{baseURL}}/api/public/products/:produto_id/reviews      # Listar avaliações de um produto
+GET {{baseURL}}/api/public/products/:produto_id/reviews/stats # Estatísticas de avaliações
+```
+
+#### **👤 Cliente (Gerenciar suas avaliações):**
+```
+POST {{clientURL}}/products/:produto_id/review # Criar avaliação
+GET {{clientURL}}/reviews                      # Listar suas avaliações
+GET {{clientURL}}/reviews/:id                  # Buscar avaliação específica
+PUT {{clientURL}}/reviews/:id                  # Atualizar sua avaliação
+DELETE {{clientURL}}/reviews/:id               # Deletar sua avaliação
+```
+
+#### **Criar Avaliação:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+POST {{clientURL}}/products/1/review
+{
+  "nota": 5,
+  "comentario": "Excelente produto! Superou minhas expectativas."
+}
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Avaliação criada com sucesso",
+  "data": {
+    "review": {
+      "id": 1,
+      "produto_id": 1,
+      "usuario_id": 3,
+      "nota": 5,
+      "comentario": "Excelente produto! Superou minhas expectativas.",
+      "criado_em": "2025-08-18T22:15:00.000Z",
+      "usuario_nome": "João Silva",
+      "produto_nome": "Smartphone Galaxy S24"
+    }
+  }
+}
+```
+
+#### **Listar Avaliações de um Produto (Público):**
+```json
+GET {{baseURL}}/api/public/products/1/reviews?page=1&limit=10&order=desc
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Avaliações listadas com sucesso",
+  "data": {
+    "produto": {
+      "id": 1,
+      "nome": "Smartphone Galaxy S24"
+    },
+    "stats": {
+      "total_avaliacoes": 15,
+      "nota_media": 4.3,
+      "maior_nota": 5,
+      "menor_nota": 2,
+      "distribuicao_notas": {
+        "5": 8,
+        "4": 4,
+        "3": 2,
+        "2": 1,
+        "1": 0
+      }
+    },
+    "reviews": [
+      {
+        "id": 1,
+        "produto_id": 1,
+        "usuario_id": 3,
+        "nota": 5,
+        "comentario": "Excelente produto!",
+        "criado_em": "2025-08-18T22:15:00.000Z",
+        "usuario_nome": "João Silva"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 10,
+      "total": 15,
+      "total_pages": 2,
+      "has_next": true,
+      "has_prev": false
+    }
+  }
+}
+```
+
+#### **Estatísticas de Avaliações:**
+```json
+GET {{baseURL}}/api/public/products/1/reviews/stats
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "message": "Estatísticas obtidas com sucesso",
+  "data": {
+    "produto": {
+      "id": 1,
+      "nome": "Smartphone Galaxy S24"
+    },
+    "stats": {
+      "total_avaliacoes": 15,
+      "nota_media": 4.3,
+      "maior_nota": 5,
+      "menor_nota": 2,
+      "distribuicao_notas": {
+        "5": 8,
+        "4": 4,
+        "3": 2,
+        "2": 1,
+        "1": 0
+      }
+    }
+  }
+}
+```
+
+#### **Listar Suas Avaliações:**
+```
+Headers:
+Authorization: Bearer {{authToken}}
+```
+```json
+GET {{clientURL}}/reviews?page=1&limit=10
+```
+
+#### **Atualizar Sua Avaliação:**
+```
+Headers:
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+Body:
+```
+```json
+PUT {{clientURL}}/reviews/1
+{
+  "nota": 4,
+  "comentario": "Bom produto, mas o preço poderia ser melhor."
+}
+```
+
+### **📝 Regras de Negócio - Avaliações:**
+- ✅ **Apenas após compra e envio**: Só pode avaliar produtos que já comprou e que tenham status "enviado" ou "entregue"
+- ✅ **Uma avaliação por produto**: Cada usuário pode fazer apenas 1 avaliação por produto
+- ✅ **Notas de 1 a 5**: Sistema de estrelas obrigatório
+- ✅ **Comentário opcional**: Pode avaliar só com nota ou adicionar comentário
+- ✅ **Edição permitida**: Usuário pode atualizar ou deletar sua própria avaliação
+- ✅ **Visualização pública**: Qualquer pessoa pode ver as avaliações (sem autenticação)
 
 ## **🎯 Exemplos de Uso Completo**
 

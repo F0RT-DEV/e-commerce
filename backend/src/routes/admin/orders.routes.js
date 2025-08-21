@@ -3,7 +3,7 @@ import { authenticateToken } from '../../middlewares/authMiddleware.js';
 import { verifyAdminRole } from '../../middlewares/role.middleware.js';
 import { 
   listAllOrders,
-  getOrderByIdAdmin, 
+  getOrderDetailsAdmin, 
   updateOrderStatusAdmin,
   getOrderReports 
 } from '../../modules/order/orderController.js';
@@ -21,7 +21,7 @@ router.get('/', listAllOrders);
 router.get('/reports', getOrderReports);
 
 // 🔍 Buscar pedido específico (visão admin)
-router.get('/:id', getOrderByIdAdmin);
+router.get('/:id', getOrderDetailsAdmin);
 
 // 🔄 Atualizar status do pedido
 router.patch('/:id/status', updateOrderStatusAdmin);

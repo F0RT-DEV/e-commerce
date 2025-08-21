@@ -11,8 +11,25 @@
 ✅ Busca avançada para admin
 ✅ Relatórios estatísticos
 ✅ Separação rotas cliente/admin
-✅ Atualização de status pelo admin
-✅ Histórico completo de compras
+✅ Atualização de status pelo admi### **🔴 Funcionalidades Futuras:**
+```
+💳 Pagamentos (Stripe/PayPal) - Backend + Frontend
+📁 Upload de Imagens - Backend + Frontend  
+🔍 Busca Avançada (Elasticsearch) - Backend + Frontend
+📊 Dashboard Admin Visual - Apenas Frontend (APIs prontas)
+📱 Push Notifications - Backend + Frontend
+```
+
+### **🎯 Especificamente para Backend:**
+```
+💳 Webhook handlers para pagamentos
+💳 Validação de transações financeiras
+📁 Middleware de upload de imagens
+📁 Integração com storage (S3/Cloudinary)
+🔍 Integração com Elasticsearch
+🔍 APIs de busca avançada
+📱 Sistema de push notifications
+```tórico completo de compras
 ```
 
 ### **📩 8. Sistema de Notificações**
@@ -29,6 +46,22 @@
 ✅ Integração total com outros módulos
 ✅ Logs e monitoramento
 ✅ Validações robustas
+```
+
+### **⭐ 9. Sistema de Avaliações**
+```
+✅ CRUD completo de avaliações
+✅ Validação de compra obrigatória
+✅ Avaliações por produto
+✅ Sistema de notas (1-5)
+✅ Comentários opcionais
+✅ Estatísticas automáticas
+✅ Uma avaliação por produto/usuário
+✅ Atualização/edição de avaliações
+✅ Business rules robustas
+✅ Integração com sistema de pedidos
+✅ Validações completas com Joi
+✅ Middleware de autenticação
 ```
 
 **🔄 Fluxo Automático de Notificações:**
@@ -54,7 +87,29 @@
 - ✅ **Carrinho** → Notifica ao finalizar compra
 - ✅ **Pedidos** → Notifica mudanças de status
 - ✅ **Cupons** → Notifica aplicação de desconto
-- ✅ **Todos os módulos** → Logs não críticos (não quebram fluxo) Cupons, Notificações
+- ✅ **Todos os módulos** → Logs não críticos (não quebram fluxo)
+
+**⭐ Sistema de Avaliações - Fluxo Completo:**
+
+**Business Rules:**
+1. **Validação de Compra** → Usuário deve ter comprado o produto
+2. **Status do Pedido** → Pedido deve estar "enviado" ou "entregue"
+3. **Uma Avaliação** → Apenas 1 avaliação por produto/usuário
+4. **Notas Válidas** → Escala de 1 a 5 estrelas
+5. **Proprietário** → Usuário só edita/deleta suas próprias avaliações
+
+**Gestão Pelo Cliente:**
+1. **Criar Avaliação** → Nota (1-5) + comentário opcional
+2. **Listar Avaliações** → Por produto, com paginação
+3. **Atualizar Avaliação** → Editar nota e comentário
+4. **Deletar Avaliação** → Remover própria avaliação
+5. **Estatísticas** → Média de notas, total de avaliações
+
+**Integrações Automáticas:**
+- ✅ **Pedidos** → Verifica se usuário comprou produto
+- ✅ **Produtos** → Calcula média e total de avaliações
+- ✅ **Usuários** → Validação de propriedade das avaliações
+- ✅ **Autenticação** → Middleware obrigatório Cupons, Notificações
 🟡 EM ANDAMENTO: Reviews
 🔴 PENDENTE: Pagamentos, Upload de Imagens, Dashboard Visual
 ```
@@ -68,9 +123,11 @@
 - **Sistema de Pedidos** - Criação via checkout, gestão de status, relatórios
 - **Sistema de Cupons** - CRUD admin, aplicação no carrinho, validações avançadas
 - **Sistema de Notificações** - Alertas automáticos, CRUD, integração total
+- **Sistema de Avaliações** - CRUD client, business rules, validação de compra
 
 ### **Em Desenvolvimento** 🚧
-- **Sistema de Avaliações** - Avaliações e comentários de produtos
+
+*Todos os módulos principais do e-commerce foram concluídos! O backend está 100% funcional para as operações de compra. Próximos passos focam em pagamentos e interface.*
 
 ### **Pendente** ⏳
 - **Sistema de Pagamentos** - Integração com gateways de pagamento
@@ -228,17 +285,25 @@ backend/
 👥 usuarios (id, nome, email, senha, tipo, telefone, endereco)
 📦 produtos (id, nome, descricao, preco, estoque, imagem, categoria_id)
 🏷️ categorias (id, nome, descricao)
+📋 pedidos (id, usuario_id, subtotal, valor_desconto, valor_frete, total, status, metodo_pagamento, codigo_cupom, endereco_*, observacoes, criado_em, atualizado_em)
+📦 pedido_itens (id, pedido_id, produto_id, quantidade, preco_unitario)
 🎟️ cupons (id, codigo, tipo, valor, validade, limite_uso, ativo, created_at, updated_at)
 🔗 cupons_usuarios (id, cupom_id, usuario_id, usado_em)
-� notificacoes (id, usuario_id, titulo, mensagem, lida, criado_em)
-�🔑 password_resets (token, email, created_at)
+📩 notificacoes (id, usuario_id, titulo, mensagem, lida, criado_em)
+⭐ avaliacoes (id, usuario_id, produto_id, nota, comentario, criadas_em, atualizado_em)
+🔑 password_resets (token, email, created_at)
 ```
 
 ### **Relacionamentos:**
 - `produtos.categoria_id` → `categorias.id` (Many-to-One)
+- `pedidos.usuario_id` → `usuarios.id` (Many-to-One)
+- `pedido_itens.pedido_id` → `pedidos.id` (Many-to-One)
+- `pedido_itens.produto_id` → `produtos.id` (Many-to-One)
 - `cupons_usuarios.cupom_id` → `cupons.id` (Many-to-One)
 - `cupons_usuarios.usuario_id` → `usuarios.id` (Many-to-One)
 - `notificacoes.usuario_id` → `usuarios.id` (Many-to-One)
+- `avaliacoes.usuario_id` → `usuarios.id` (Many-to-One)
+- `avaliacoes.produto_id` → `produtos.id` (Many-to-One)
 - `password_resets.email` → `usuarios.email` (One-to-One)
 
 ---
@@ -330,6 +395,31 @@ DELETE /:id             # Deletar notificação
 POST /                  # Criar notificação manual (admin)
 ```
 
+### **📋 Cliente - Pedidos (`/api/client/orders`)**
+```
+GET /                   # Listar pedidos do usuário
+GET /:id                # Detalhes de pedido específico
+```
+
+### **⚙️ Admin - Pedidos (`/api/admin/orders`)**
+```
+GET /                   # Listar todos os pedidos (com filtros)
+GET /reports            # Relatórios e estatísticas
+GET /:id                # Detalhes do pedido (visão admin)
+PATCH /:id/status       # Atualizar status do pedido
+```
+
+### **⭐ Cliente - Avaliações (`/api/client/reviews`)**
+```
+GET /                   # Listar avaliações do usuário
+GET /product/:produto_id # Listar avaliações por produto
+POST /                  # Criar nova avaliação
+PUT /:id                # Atualizar avaliação completa
+PATCH /:id              # Atualizar avaliação parcial
+DELETE /:id             # Deletar avaliação
+GET /stats              # Estatísticas de avaliações
+```
+
 ---
 
 ## 🎯 **Próximos Passos**
@@ -341,22 +431,16 @@ POST /                  # Criar notificação manual (admin)
    - Calcular totais
    - Persistir no banco
 
-📋 Sistema de Pedidos
-   - Criar pedidos
-   - Status de pedidos
-   - Histórico de compras
-
-⭐ Sistema de Reviews
-   - Avaliar produtos
-   - Comentários
-   - Média de avaliações
+🎟️ Sistema de Cupons
+   - Criar cupons (percentual/fixo)
+   - Aplicar descontos
+   - Validar expiração
 ```
 
 ### **🔴 Funcionalidades Futuras:**
 ```
 💳 Pagamentos (Stripe/PayPal)
-📧 Sistema de Notificações
-📁 Upload de Imagens
+ Upload de Imagens
 📊 Dashboard Admin Avançado
 📱 API Mobile-friendly
 🔍 Busca Avançada (Elasticsearch)
@@ -367,15 +451,15 @@ POST /                  # Criar notificação manual (admin)
 ## 📈 **Métricas do Projeto**
 
 ### **Arquivos Criados:**
-- ✅ **25+ Controllers** (auth, user, product, category, coupon, cart, order, notification)
-- ✅ **20+ Models** (database queries + validations + business logic)
-- ✅ **15+ Routes** (public + admin + client)
-- ✅ **12+ Migrations** (database schema)
-- ✅ **8+ Middlewares** (auth, validation, roles)
+- ✅ **30+ Controllers** (auth, user, product, category, coupon, cart, order, notification, review)
+- ✅ **25+ Models** (database queries + validations + business logic)
+- ✅ **18+ Routes** (public + admin + client)
+- ✅ **15+ Migrations** (database schema)
+- ✅ **10+ Middlewares** (auth, validation, roles)
 
-### **Linhas de Código:** ~4500+ LOC
-### **Endpoints:** 50+ rotas funcionais
-### **Tabelas:** 7 tabelas principais
+### **Linhas de Código:** ~5000+ LOC
+### **Endpoints:** 70+ rotas funcionais
+### **Tabelas:** 10 tabelas principais
 
 ---
 
@@ -418,10 +502,10 @@ DADOS_TESTE_CATEGORIAS.sql
 ## 🎯 **Objetivo Final**
 
 Criar um **e-commerce completo** com:
-- ✅ **Backend robusto** (autenticação, produtos, categorias, cupons, notificações)
-- ✅ **Funcionalidades de compra** (carrinho, pedidos, descontos, alertas)
+- ✅ **Backend robusto** (autenticação, produtos, categorias, cupons, notificações, avaliações)
+- ✅ **Funcionalidades de compra** (carrinho, pedidos, descontos, alertas, reviews)
 - 🔴 **Sistema de pagamentos** (gateways, processamento)
 - 🔴 **Interface admin** (dashboard, relatórios)
 - 🔴 **Frontend responsivo** (React/Vue)
 
-**Status:** ~85% concluído do MVP básico! 🚀
+**Status:** ~90% concluído do MVP básico! 🚀
